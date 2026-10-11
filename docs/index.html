@@ -1964,6 +1964,7 @@ html[data-theme="dark"] .glass #pins .vrangelab{color:#FFAE8A;background:rgba(30
 .glass .col.list .colhead .sub{margin-left:auto}
 .glass .col.list .colhead h2{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+.pin.q.qw button{pointer-events:auto}
 .glass #pins.vfocus .pin.a.v-out,.glass #pins.vfocus .pin.q:not(.sel),.glass #pins.vfocus .pin.v:not(.sel),.glass #pins.vfocus .pin.t:not(.sel),.glass #pins.vfocus .pin.l{display:none}
 .glass #pins .vrange.k-q{border-color:rgba(106,27,154,.7);background:rgba(106,27,154,.06)}
 .glass #pins .vrangelab.k-q{color:#6A1B9A}
@@ -2392,7 +2393,7 @@ html[data-theme="dark"] .alertbtn b{box-shadow:0 0 0 2px #16202F}
       <div class="src"><b>Chance of rain and the 7-day outlook</b><span class="t">From Open-Meteo, a computer forecast. Used only for the hourly rain chance and the Next 7 days list. It never affects an alert level, and if it cannot be reached those two items are simply left out.</span></div>
       <div class="src"><b>Tropical cyclones (typhoons)</b><span class="t">Three independent sources are read at every check and compared. Aviation storm warnings from aviationweather.gov give the position, movement and warning areas. RSMC Tokyo, the Japan Meteorological Agency centre that is the official typhoon centre for this region under the World Meteorological Organization, gives the strength, how far the strong winds reach and the 24-hour forecast. GDACS, the United Nations and European Union disaster alert system, gives a third, independent position and strength. A cyclone counts as confirmed only when at least two of the three report it. Thunderstorm area warnings come from the aviation storm warnings.</span></div>
       <div class="src"><b>Low pressure areas</b><span class="t">From the Joint Typhoon Warning Center (United States Navy and Air Force) tropical weather advisory, which lists each area it is watching in the western Pacific and whether it has a low, medium or high chance of becoming a tropical cyclone within 24 hours. This is one source only, shown for information and never used for an alert. PAGASA names low pressure areas in its own bulletins, which are not published as data.</span></div>
-      <div class="src"><b>Earthquakes</b><span class="t">First choice: PHIVOLCS, the Philippine government agency with the most earthquake sensors inside the country. Backups: USGS (United States Geological Survey), then EMSC (European seismological centre). Agencies can report slightly different magnitudes for the same earthquake. Every earthquake of magnitude 5.0 or stronger is also checked against a second agency (USGS or EMSC, whichever is not already the main source), and its details say whether it has been confirmed.</span></div>
+      <div class="src"><b>Earthquakes</b><span class="t">First choice: PHIVOLCS, the Philippine government agency with the most earthquake sensors inside the country. Backups: USGS (United States Geological Survey), then EMSC (European seismological centre). Agencies can report slightly different magnitudes for the same earthquake. Every earthquake of magnitude 4.5 or stronger is also checked against a second agency (USGS or EMSC, whichever is not already the main source), and its details say whether it has been confirmed.</span></div>
       <div class="src"><b>Volcanoes</b><span class="t">Ash clouds and eruptions use two official sources. Primary: aviation volcanic ash warnings (SIGMET) from aviationweather.gov, which give the area the ash covers. Second source: advisories from the Tokyo Volcanic Ash Advisory Centre (Japan Meteorological Agency), the official ash centre for this region. It confirms the warning, and stands in for it when the warning has not been issued yet or cannot be reached. Volcano Alert Levels: PHIVOLCS volcano bulletins first; if they cannot be read automatically, figures entered by hand are used as the backup, and otherwise the level shows as not available.</span></div>
       <div class="src"><b>Rain on the map</b><span class="t">A MET Norway forecast sampled on a grid of points across the region, rebuilt every 3 hours. The optional detailed map is provided by Windy.com.</span></div>
     </div>
@@ -2401,7 +2402,7 @@ html[data-theme="dark"] .alertbtn b{box-shadow:0 0 0 2px #16202F}
       <p class="subh">How each reading is checked before it is shown or sent</p>
       <ul>
         <li><strong>Airport weather.</strong> The official airport report is the authority; there is one per airport, so it is checked for age instead: older than 90 minutes lowers the Confidence, and an airport with no report is marked Estimate. The same report can be read from two servers. Danger is only ever raised from the official report.</li>
-        <li><strong>Earthquakes.</strong> Shown and sent as soon as the first agency reports them, because minutes matter. Each one of magnitude 5.0 or stronger carries a Cross-check line: confirmed by a second agency, or not yet confirmed. The figures follow any revision at the next update.</li>
+        <li><strong>Earthquakes.</strong> Shown and sent as soon as the first agency reports them, because minutes matter. Each one of magnitude 4.5 or stronger carries a Cross-check line: confirmed by a second agency, or not yet confirmed. The figures follow any revision at the next update.</li>
         <li><strong>Volcanoes.</strong> An ash warning or eruption is sent as soon as either official source reports it. The details say whether the Tokyo ash centre has confirmed the aviation warning.</li>
         <li><strong>Typhoons.</strong> A cyclone raises an alert only after two of the three sources agree on it. Until then it is listed as Not yet confirmed.</li>
         <li><strong>If a source is down.</strong> Its backup is used and a yellow notice says so. If nothing can cross-check a reading, the reading says so in plain words rather than appearing confirmed.</li>
@@ -2414,11 +2415,11 @@ html[data-theme="dark"] .alertbtn b{box-shadow:0 0 0 2px #16202F}
         <li><strong>Bad weather in an Estimate</strong> means 2.5 mm or more of rain in an hour, or winds of 39 km/h or more.</li>
         <li><strong>How heavy.</strong> Light is under 2.5 mm of rain in an hour, Moderate is 2.5 mm or more, Heavy is 7.6 mm or more.</li>
         <li><strong>Area warnings.</strong> An airport inside an official thunderstorm or tropical cyclone area warning is raised to Warning.</li>
-        <li><strong>Earthquakes shown</strong> are magnitude 4.5 or stronger in the Philippine area over the past 7 days.</li>
-        <li><strong>Aftershocks.</strong> Smaller earthquakes (below magnitude 5.0) within 100 km of a main earthquake of magnitude 5.0 or stronger, in the 72 hours after it, are grouped with it. Each is a small purple dot on the map, and the main earthquake's details list them together.</li>
+        <li><strong>Earthquakes shown.</strong> Purple rings are magnitude 4.5 or stronger in the Philippine area over the past 7 days; select one for details. Small purple dots are weaker earthquakes, magnitude 3.0 to 4.4 from the past 3 days, shown for awareness only: hover for the size, place and time. They never raise an alert.</li>
+        <li><strong>Aftershocks.</strong> Smaller earthquakes (below magnitude 4.5) within 100 km of a main earthquake of magnitude 5.0 or stronger, in the 72 hours after it, are grouped with it. Each is a small purple dot on the map, and the main earthquake's details list them together.</li>
         <li><strong>Why magnitudes differ.</strong> Each agency measures with its own instruments and method, so PHIVOLCS, USGS and phone alerts can show different figures for the same earthquake, and first figures are often revised. The dashboard shows the PHIVOLCS figure, shows the USGS figure beside it for strong earthquakes, and uses the more cautious of the two positions when deciding whether an airport is within 100 km.</li>
         <li><strong>Early notice.</strong> The data is collected about every 20 minutes, and a separate quick check for earthquakes and ash warnings runs every few minutes. In between, an open page asks USGS once a minute. An earthquake that meets the alert rules is shown at once as an early notice, then replaced by the confirmed figures at the next update. USGS usually publishes within about 10 to 20 minutes of an earthquake, so no source is instant.</li>
-        <li><strong>Earthquake alerts</strong> cover the last 24 hours: magnitude 5.0 or stronger within 100 km of an airport, or magnitude 6.0 or stronger anywhere in the Philippine area.</li>
+        <li><strong>Earthquake alerts</strong> cover the last 24 hours: magnitude 4.5 or stronger within 100 km of an airport, or magnitude 6.0 or stronger anywhere in the Philippine area.</li>
         <li><strong>Possible tsunami</strong> is shown for an earthquake of magnitude 6.5 or stronger no deeper than 70 km, or one that USGS has flagged for tsunami information. It is a prompt to check PHIVOLCS bulletins, not an official tsunami warning.</li>
         <li><strong>Typhoon classes</strong> follow PAGASA and use winds averaged over 10 minutes: Tropical Depression up to 61 km/h, Tropical Storm 62 to 88, Severe Tropical Storm 89 to 117, Typhoon 118 to 184, Super Typhoon 185 or more. GDACS measures over 1 minute, which reads higher, so its figure is shown for comparison only.</li>
         <li><strong>A confirmed cyclone</strong> is one that at least two of the three sources report: the same name within 1,000 km, or positions within 300 km of each other.</li>
@@ -2635,6 +2636,10 @@ function renderData() {
   fillAirportPick();
 
   var h = '';
+  (D.quakes_small || []).forEach(function (k) {      // weaker earthquakes: a small dot with its details on hover, never an alert
+    var ds = k[2] >= 4 ? 9 : 7, sl = 'Magnitude ' + k[2].toFixed(1) + ', ' + k[4] + ', ' + phDay(k[3]) + ' ' + phTime(k[3]) + '. Too weak for an alert.';
+    h += '<div class="pin q qs qw" style="left:' + k[0].toFixed(2) + '%;top:' + k[1].toFixed(2) + '%;opacity:' + (Date.now() - k[3] > 86400000 ? '.45' : '.8') + '" title="' + esc(sl) + '"><button tabindex="-1" aria-label="' + esc(sl) + '" title="' + esc(sl) + '" style="cursor:default"><i style="width:' + ds + 'px;height:' + ds + 'px"></i></button></div>';
+  });
   allQuakes().forEach(function (q) {
     (q.shocks || []).forEach(function (k) {
       var ds = k[2] >= 4 ? 10 : k[2] >= 3 ? 8 : 7, sl = 'Aftershock, magnitude ' + k[2].toFixed(1) + ', ' + phTime(k[3]);
@@ -3636,6 +3641,7 @@ layer.addEventListener('pointerup', pointerEnd); layer.addEventListener('pointer
 layer.addEventListener('click', function (e) {
   if (moved) { moved = false; e.stopPropagation(); e.preventDefault(); return; }
   var b = e.target.closest('.pin'); if (!b || !e.target.closest('button')) return;
+  if (b.classList.contains('qw')) return;      // a weak earthquake dot: information on hover only
   if (b.hasAttribute('data-a')) selectAirport(b.getAttribute('data-a')); else if (b.hasAttribute('data-v')) selectVolcano(b.getAttribute('data-v')); else if (b.hasAttribute('data-t')) selectCyclone(b.getAttribute('data-t')); else selectQuake(b.getAttribute('data-q'));
 }, true);
 
@@ -3759,11 +3765,11 @@ function nearestAirport(la, lo) { var best = null, bk = 1e9; D.airports.forEach(
 function liveQuakes() {
   if (!D || document.hidden) return;
   var since = new Date(Date.now() - QUAKE_LIVE_HOURS * 3600000).toISOString().slice(0, 19);
-  fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5&minlatitude=3&maxlatitude=22&minlongitude=114&maxlongitude=130&starttime=' + since).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {
+  fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&minlatitude=3&maxlatitude=22&minlongitude=114&maxlongitude=130&starttime=' + since).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {
     var out = [];
     (j.features || []).forEach(function (f) {
       var p = f.properties, c = f.geometry.coordinates, lo = c[0], la = c[1], dep = Math.max(0, Math.round(c[2] || 0)), mag = +p.mag;
-      if (!(mag >= 5)) return;
+      if (!(mag >= 4.5)) return;
       if (D.quakes.some(function (q) { return q.ms && Math.abs(q.ms - p.time) <= 5 * 60000 && kmBetween(la, lo, q.lat, q.lon) <= 300; })) return;   // already in the scheduled data
       if (p.time < D.generated_ms - 45 * 60000) return;          // old enough that the main source has had its chance and does not list it at this size
       var n = nearestAirport(la, lo), km = Math.round(n.km / 10) * 10, flag = n.km <= 100, strong = mag >= 6;
