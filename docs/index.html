@@ -1011,6 +1011,10 @@ header.top{padding:10px 16px;border-radius:10px}
 @media (max-width:380px){.app .col.side .stabs button{padding:0 4px;font-size:11.5px}}
 .al.volcano{background:#BF360C}
 .al.typhoon{background:#0B6E8A}
+.pin.qw button{cursor:pointer}
+.qnote{position:fixed;z-index:70;max-width:min(300px,calc(100vw - 24px));font-size:12px;line-height:1.35;color:#3B1560;background:rgba(255,255,255,.97);border:1px solid rgba(106,27,154,.3);border-radius:10px;padding:6px 11px;box-shadow:0 8px 20px rgba(40,30,80,.22);pointer-events:none}
+.qnote[hidden]{display:none}
+.qnote b{display:block;font-weight:700}.qnote span{display:block}.qnote em{display:block;font-style:normal;color:#5B7180;font-size:11px}
 .pin.l{z-index:4}
 .pin.l.sel .tsel{display:block;position:absolute;left:-18px;top:-18px;width:36px;height:36px;border-radius:50%;border:3px solid #C62828;background:rgba(198,40,40,.12);pointer-events:none}
 .pin.l .tsel{display:none}
@@ -2066,6 +2070,8 @@ html[data-theme="dark"] .glass .pin.l .llab em{color:#B7C4D0}
 html[data-theme="dark"] .glass .lowline b{color:#FFB3AB}
 html[data-theme="dark"] .glass .parline polygon{stroke:#6ECDE4}
 html[data-theme="dark"] .glass .parlab{color:#8FDCEF;background:rgba(30,39,58,.88)}
+html[data-theme="dark"] .glass .qnote{color:#E7D3F7;background:rgba(30,39,58,.97);border-color:rgba(201,140,240,.45)}
+html[data-theme="dark"] .glass .qnote em{color:#B7C4D0}
 html[data-theme="dark"] .glass .tynote{color:#A9B8C6}
 html[data-theme="dark"] .glass .vline.tline b{color:#8FDCEF}
 html[data-theme="dark"] .glass .vline.tline.quiet b{color:#C6D2DD}
@@ -2415,7 +2421,7 @@ html[data-theme="dark"] .alertbtn b{box-shadow:0 0 0 2px #16202F}
         <li><strong>Bad weather in an Estimate</strong> means 2.5 mm or more of rain in an hour, or winds of 39 km/h or more.</li>
         <li><strong>How heavy.</strong> Light is under 2.5 mm of rain in an hour, Moderate is 2.5 mm or more, Heavy is 7.6 mm or more.</li>
         <li><strong>Area warnings.</strong> An airport inside an official thunderstorm or tropical cyclone area warning is raised to Warning.</li>
-        <li><strong>Earthquakes shown.</strong> Purple rings are magnitude 4.5 or stronger in the Philippine area over the past 7 days; select one for details. Small purple dots are weaker earthquakes, magnitude 3.0 to 4.4 from the past 3 days, shown for awareness only: hover for the size, place and time. They never raise an alert.</li>
+        <li><strong>Earthquakes shown.</strong> Purple rings are magnitude 4.5 or stronger in the Philippine area over the past 7 days; select one for details. Small purple dots are weaker earthquakes, magnitude 3.0 to 4.4 from the past 3 days, shown for awareness only: tap or hover one for a small label with its size, place and time. They never raise an alert and do not open a details window.</li>
         <li><strong>Aftershocks.</strong> Smaller earthquakes (below magnitude 4.5) within 100 km of a main earthquake of magnitude 5.0 or stronger, in the 72 hours after it, are grouped with it. Each is a small purple dot on the map, and the main earthquake's details list them together.</li>
         <li><strong>Why magnitudes differ.</strong> Each agency measures with its own instruments and method, so PHIVOLCS, USGS and phone alerts can show different figures for the same earthquake, and first figures are often revised. The dashboard shows the PHIVOLCS figure, shows the USGS figure beside it for strong earthquakes, and uses the more cautious of the two positions when deciding whether an airport is within 100 km.</li>
         <li><strong>Early notice.</strong> The data is collected about every 20 minutes, and a separate quick check for earthquakes and ash warnings runs every few minutes. In between, an open page asks USGS once a minute. An earthquake that meets the alert rules is shown at once as an early notice, then replaced by the confirmed figures at the next update. USGS usually publishes within about 10 to 20 minutes of an earthquake, so no source is instant.</li>
@@ -2637,8 +2643,8 @@ function renderData() {
 
   var h = '';
   (D.quakes_small || []).forEach(function (k) {      // weaker earthquakes: a small dot with its details on hover, never an alert
-    var ds = k[2] >= 4 ? 9 : 7, sl = 'Magnitude ' + k[2].toFixed(1) + ', ' + k[4] + ', ' + phDay(k[3]) + ' ' + phTime(k[3]) + '. Too weak for an alert.';
-    h += '<div class="pin q qs qw" style="left:' + k[0].toFixed(2) + '%;top:' + k[1].toFixed(2) + '%;opacity:' + (Date.now() - k[3] > 86400000 ? '.45' : '.8') + '" title="' + esc(sl) + '"><button tabindex="-1" aria-label="' + esc(sl) + '" title="' + esc(sl) + '" style="cursor:default"><i style="width:' + ds + 'px;height:' + ds + 'px"></i></button></div>';
+    var ds = k[2] >= 4 ? 9 : 7, sl = 'Magnitude ' + k[2].toFixed(1) + ' \u00B7 ' + k[4] + ' \u00B7 ' + phDay(k[3]) + ', ' + phTime(k[3]) + ' \u00B7 no alert';
+    h += '<div class="pin q qs qw" style="left:' + k[0].toFixed(2) + '%;top:' + k[1].toFixed(2) + '%;opacity:' + (Date.now() - k[3] > 86400000 ? '.45' : '.8') + '" data-note="' + esc(sl) + '"><button aria-label="' + esc(sl) + '"><i style="width:' + ds + 'px;height:' + ds + 'px"></i></button></div>';
   });
   allQuakes().forEach(function (q) {
     (q.shocks || []).forEach(function (k) {
@@ -3641,7 +3647,7 @@ layer.addEventListener('pointerup', pointerEnd); layer.addEventListener('pointer
 layer.addEventListener('click', function (e) {
   if (moved) { moved = false; e.stopPropagation(); e.preventDefault(); return; }
   var b = e.target.closest('.pin'); if (!b || !e.target.closest('button')) return;
-  if (b.classList.contains('qw')) return;      // a weak earthquake dot: information on hover only
+  if (b.classList.contains('qw')) { e.stopPropagation(); weakNote(b); return; }      // a weak earthquake dot: a small label, nothing else
   if (b.hasAttribute('data-a')) selectAirport(b.getAttribute('data-a')); else if (b.hasAttribute('data-v')) selectVolcano(b.getAttribute('data-v')); else if (b.hasAttribute('data-t')) selectCyclone(b.getAttribute('data-t')); else selectQuake(b.getAttribute('data-q'));
 }, true);
 
@@ -3761,6 +3767,25 @@ function load() {
    shown as an "early notice" until the scheduled data (PHIVOLCS first) confirms it. */
 var QUAKE_LIVE_MS = 60000, QUAKE_LIVE_HOURS = 3;
 var QP = { cx: [8.69278161, -1008.33883896], cy: [-5.91775171, 125.45788502] };      // map position from longitude and latitude (same figures as build.py)
+/* a weak earthquake: tapping or hovering shows one small label beside the dot; it never opens the details, zooms or raises anything */
+var WEAK_PIN = null;
+function weakNote(pin) {
+  var n = document.getElementById('qNote');
+  if (pin && pin === WEAK_PIN && n && !n.hidden) return;      // already showing for this dot
+  WEAK_PIN = pin || null;
+  if (!pin) { if (n) n.hidden = true; return; }
+  if (!n) { n = document.createElement('div'); n.id = 'qNote'; n.className = 'qnote'; n.setAttribute('role', 'status'); document.body.appendChild(n); }
+  var t = String(pin.getAttribute('data-note') || '').split(' \u00B7 ');
+  n.innerHTML = '<b>' + esc(t[0] || '') + '</b><span>' + esc(t.slice(1, -1).join(' \u00B7 ')) + '</span><em>' + esc(t[t.length - 1] || '') + '</em>'; n.hidden = false;
+  // the label sits above the dot and always stays inside the map panel
+  var vr = $('vp').getBoundingClientRect(), pr = pin.getBoundingClientRect(); n.style.maxWidth = Math.min(300, Math.floor(vr.width - 16)) + 'px';      // never wider than the map
+  var w = n.offsetWidth, h = n.offsetHeight;
+  var x = Math.min(Math.max(pr.left - w / 2, vr.left + 6), vr.right - w - 6), y = pr.top - h - 10; if (y < vr.top + 6) y = pr.top + 12;
+  n.style.left = Math.round(x) + 'px'; n.style.top = Math.round(y) + 'px';
+}
+['wheel', 'pointerdown', 'scroll'].forEach(function (ev) { window.addEventListener(ev, function (e) { if (!(e.target.closest && e.target.closest('.pin.qw'))) weakNote(null); }, { capture: true, passive: true }); });
+document.addEventListener('click', function (e) { if (!e.target.closest || !e.target.closest('.pin.qw')) weakNote(null); });
+document.addEventListener('mouseover', function (e) { var p = e.target.closest && e.target.closest('.pin.qw'); if (p && !p.querySelector('.qnote')) weakNote(p); });
 function nearestAirport(la, lo) { var best = null, bk = 1e9; D.airports.forEach(function (a) { if (typeof a.lat !== 'number') return; var k = kmBetween(la, lo, a.lat, a.lon); if (k < bk) { bk = k; best = a; } }); return { a: best, km: bk }; }
 function liveQuakes() {
   if (!D || document.hidden) return;
