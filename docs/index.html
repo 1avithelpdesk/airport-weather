@@ -1977,10 +1977,12 @@ html[data-theme="dark"] .glass #pins .vrangelab{color:#FFAE8A;background:rgba(30
 .glass #pins.vfocus.f-q .ashtag,.glass #pins.vfocus.f-t .ashtag,.glass #pins.vfocus.f-q .ashlayer,.glass #pins.vfocus.f-t .ashlayer{display:none}
 .glass #pins .ttrack{position:absolute;inset:0;pointer-events:none}
 .glass #pins .ttrack svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.glass #pins .ttrack .tline{fill:none;stroke:#0B6E8A;stroke-width:2;stroke-dasharray:2 5;stroke-linecap:round;opacity:.9}
-.glass #pins .ttrack .tpast{fill:none;stroke:#0B6E8A;stroke-width:2;opacity:.45}
-.glass #pins .ttrack .tcone{fill:rgba(11,110,138,.09);stroke:rgba(11,110,138,.35);stroke-width:1}
-.glass #pins .tfc.alt b{top:auto;bottom:17px}
+.glass #pins .ttrack .tline{fill:none;stroke:#0B5A72;stroke-width:3;stroke-dasharray:7 6;stroke-linecap:round}
+.glass #pins .ttrack .tpast{fill:none;stroke:#0B5A72;stroke-width:3;opacity:.5}
+.glass #pins .ttrack .tcone{fill:#0B6E8A;opacity:.24}
+.glass #pins .tfc i{width:16px;height:16px;border:3px solid #0B5A72;border-style:solid;background:var(--g-solid)}
+.glass #pins .tfc b{top:19px;font-size:12.5px;font-weight:700;padding:2px 10px;box-shadow:0 2px 8px rgba(20,40,80,.25)}
+.glass #pins .tfc.alt b{top:auto;bottom:19px}
 .glass #pins .tfc{position:absolute;z-index:6;pointer-events:none;transform:translate(-50%,-50%) scale(var(--inv,1))}
 .glass #pins .tfc i{display:block;width:14px;height:14px;margin:0 auto;border-radius:50%;border:2px dashed #0B6E8A;background:rgba(var(--g-surf),.85)}
 .glass #pins .tfc b{position:absolute;left:50%;top:17px;transform:translateX(-50%);font-size:11px;font-weight:600;color:#0B5A72;background:rgba(var(--g-surf),.9);border-radius:999px;padding:1px 8px;white-space:nowrap}
@@ -1990,7 +1992,8 @@ html[data-theme="dark"] .glass #pins .vrangelab.k-q{color:#D9B3F5}
 html[data-theme="dark"] .glass #pins .vrange.k-t{border-color:rgba(110,205,228,.8);background:rgba(110,205,228,.07)}
 html[data-theme="dark"] .glass #pins .vrangelab.k-t,html[data-theme="dark"] .glass #pins .tfc b{color:#8FDCEF;background:rgba(30,39,58,.92)}
 html[data-theme="dark"] .glass #pins .ttrack .tline,html[data-theme="dark"] .glass #pins .ttrack .tpast{stroke:#6ECDE4}
-html[data-theme="dark"] .glass #pins .ttrack .tcone{fill:rgba(110,205,228,.09);stroke:rgba(110,205,228,.4)}
+html[data-theme="dark"] .glass #pins .ttrack .tcone{fill:#6ECDE4;opacity:.26}
+html[data-theme="dark"] .glass #pins .tfc i{border-color:#8FDCEF;background:#0F1A27}
 html[data-theme="dark"] .glass #pins .tfc i{border-color:#6ECDE4;background:rgba(30,39,58,.85)}
 /* while something is selected, the alert cards over the map step aside; they return when the selection is cleared */
 @media (min-width:901px){
@@ -2764,9 +2767,9 @@ function selPoint() {
 function viewNow() {
   var p = selPoint(), v = S.view, zsel = 2.2;
   if (p && S.tk && !S.sel && !v && (p.track || []).length) {      // a cyclone with a forecast track: frame where it is now and where it is heading
-    var bx0 = p.x, bx1 = p.x, by0 = p.y, by1 = p.y;
-    p.track.forEach(function (q) { bx0 = Math.min(bx0, q.x); bx1 = Math.max(bx1, q.x); by0 = Math.min(by0, q.y); by1 = Math.max(by1, q.y); });
-    var wpc = Math.max(1, (bx1 - bx0) * FITX), hpc = Math.max(1, (by1 - by0) * FITY), tz = Math.max(1, Math.min(HOMEZ * 1.45, 62 / wpc, 62 / hpc));
+    var rr = (p.reach || p.gale || 200) / 111 * 5.92, bx0 = p.x - rr * 1.55 - 6, bx1 = p.x + rr * 1.55, by0 = p.y - rr, by1 = p.y + rr;      // its strong-wind ring and name too
+    p.track.forEach(function (q) { var ry = (q.r || 100) / 111 * 5.92, rx = ry * 1.55; bx0 = Math.min(bx0, q.x - rx); bx1 = Math.max(bx1, q.x + rx); by0 = Math.min(by0, q.y - ry); by1 = Math.max(by1, q.y + ry); });      // the whole cone, not only its centre line
+    var wpc = Math.max(1, (bx1 - bx0) * FITX), hpc = Math.max(1, (by1 - by0) * FITY), tz = Math.max(1, Math.min(HOMEZ * 1.45, 78 / wpc, 70 / hpc));
     return { z: tz, cx: clampC(OFFX + (bx0 + bx1) / 2 * FITX, tz, PANX), cy: clampC(OFFY + (by0 + by1) / 2 * FITY, tz, PANY) };
   }
   if (p && S.tk && !S.sel && !p.onmap && !v) { var fz = VIEWN.z, qx = p.fx != null ? (p.x + p.fx) / 2 : p.x, qy = p.fy != null ? (p.y + p.fy) / 2 : p.y; return { z: fz, cx: clampC(OFFX + qx * FITX, fz, PANX), cy: clampC(OFFY + qy * FITY, fz, PANY) }; }      // far out at sea: the map moves to it, at the same scale as the usual view
@@ -2954,7 +2957,7 @@ function applyState() {
       todoBox((cy.now || []).length || (cy.soon || []).length ? 'typhoon' : '', cy.todo) + cycloneScale(cy) +
       '<div class="dfacts"><div><span>Strongest winds</span><b>' + (cy.wind ? cy.wind + ' km/h' : 'Not reported') + '</b></div><div><span>Strong winds reach</span><b>' + (cy.gale ? 'about ' + (Math.round(cy.gale / 10) * 10) + ' km' : 'Not reported') + '</b></div><div><span>Nearest airport</span><b>' + (Math.round(cy.dist / 10) * 10).toLocaleString('en-US') + ' km</b></div></div>' +
       field('Where it is', cy.where) + ((cy.now || []).length ? field('Airports strong winds can reach now', cy.now.join(', ') + '.') : '') + ((cy.soon || []).length ? field('Airports that may be reached within 24 hours', cy.soon.join(', ') + '.') : '') +
-      field('Winds', [cy.windline, cy.reachline].filter(Boolean).join(' ')) + (cy.fcline ? field('Forecast', cy.fcline) : '') + ((cy.track || []).length > 1 ? field('Forecast track (RSMC Tokyo)', cy.track.map(function (q) { return new Date(q.ms).toLocaleString('en-US', { timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric' }) + ': ' + (q.word || 'position only') + (q.wind ? ', ' + q.wind + ' km/h' : ''); }).join('. ') + '. Each circle on the map is where the centre is most likely to be at that time; the circles widen because forecasts are less certain further ahead.') : '') + field('Cross-check', cy.cross) +
+      field('Winds', [cy.windline, cy.reachline].filter(Boolean).join(' ')) + (cy.fcline ? field('Forecast', cy.fcline) : '') + ((cy.track || []).length > 1 ? field('Forecast track (RSMC Tokyo)', cy.track.map(function (q) { return new Date(q.ms).toLocaleString('en-US', { timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric' }) + ': ' + (q.word || 'position only') + (q.wind ? ', ' + q.wind + ' km/h' : ''); }).join('. ') + '. The shaded cone on the map is where the centre is most likely to be; it widens because forecasts are less certain further ahead.') : '') + field('Cross-check', cy.cross) +
       fold('about', 'About this reading', cy.confirmed ? 'Cross-checked' : 'One source only', (cy.ms ? field('Reported', phDay(cy.ms) + ', ' + phTime(cy.ms) + ' Philippine time (' + agoText(cy.ms) + ').') : '') + field('Source', cy.src) +
         field('Official wind signals', 'PAGASA issues the official Tropical Cyclone Wind Signals. Confirm any decision against the PAGASA bulletin and CAAP and airline advisories.')) + '</div>';
   } else {
@@ -3349,10 +3352,17 @@ function volcanoFocus() {
   if (F.k === 't' && ((o.track || []).length || (o.fx != null && o.fy != null))) {      // where the cyclone has been and where it is forecast to go
     var T = (o.track || []).length ? o.track : [{ h: 24, x: o.fx, y: o.fy, lat: o.lat, ms: 0, r: null, word: '' }], P0 = o.past || [];
     var pt = function (q) { return q.x.toFixed(2) + ',' + q.y.toFixed(2); }, svg = '';
-    T.forEach(function (q) {      // the circle is where the centre is most likely to be at that time; it widens the further ahead the forecast looks
-      if (!q.r) return; var ry = q.r / 111 * 5.91775171, rx = q.r / (111 * Math.max(.3, Math.cos((q.lat || 15) * Math.PI / 180))) * 8.69278161;
-      svg += '<ellipse class="tcone" cx="' + q.x.toFixed(2) + '" cy="' + q.y.toFixed(2) + '" rx="' + rx.toFixed(2) + '" ry="' + ry.toFixed(2) + '" vector-effect="non-scaling-stroke"/>';
+    // The cone: where the centre is most likely to be over the coming days. It is drawn as one shape, from the cyclone's
+    // position out through a circle at each forecast time; it widens because the forecast is less certain further ahead.
+    var kx = 111 * Math.max(.3, Math.cos((o.lat || 15) * Math.PI / 180)) / 8.69278161, ky = 111 / 5.91775171, cone = '';
+    var C = [{ x: o.x, y: o.y, r: 25, lat: o.lat }].concat(T.map(function (q, i) { return { x: q.x, y: q.y, r: q.r || 60 + 70 * (i + 1), lat: q.lat }; }));
+    C.forEach(function (c, i) {
+      var cxk = 111 * Math.max(.3, Math.cos((c.lat || 15) * Math.PI / 180)) / 8.69278161;
+      cone += '<ellipse cx="' + c.x.toFixed(2) + '" cy="' + c.y.toFixed(2) + '" rx="' + (c.r / cxk).toFixed(2) + '" ry="' + (c.r / ky).toFixed(2) + '"/>';
+      if (!i) return; var a = C[i - 1], dx = (c.x - a.x) * kx, dy = (c.y - a.y) * ky, L = Math.sqrt(dx * dx + dy * dy) || 1, nx = -dy / L, ny = dx / L;
+      cone += '<polygon points="' + [[a, 1], [c, 1], [c, -1], [a, -1]].map(function (e) { return (e[0].x + nx * e[0].r * e[1] / kx).toFixed(2) + ',' + (e[0].y + ny * e[0].r * e[1] / ky).toFixed(2); }).join(' ') + '"/>';
     });
+    svg += '<g class="tcone">' + cone + '</g>';
     if (P0.length) svg += '<polyline class="tpast" points="' + P0.map(function (q) { return q[1] + ',' + q[2]; }).join(' ') + ' ' + pt(o) + '" vector-effect="non-scaling-stroke"/>';
     svg += '<polyline class="tline" points="' + pt(o) + ' ' + T.map(pt).join(' ') + '" vector-effect="non-scaling-stroke"/>';
     var tr = document.createElement('div'); tr.className = 'ttrack'; tr.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none">' + svg + '</svg>';
@@ -3360,7 +3370,8 @@ function volcanoFocus() {
     T.forEach(function (q, i) {
       var fc = document.createElement('span'); fc.className = 'tfc' + (i % 2 ? ' alt' : ''); fc.style.left = q.x.toFixed(2) + '%'; fc.style.top = q.y.toFixed(2) + '%';
       var lab = q.ms ? new Date(q.ms).toLocaleString('en-US', { timeZone: 'Asia/Manila', weekday: 'short', hour: 'numeric' }).replace(',', '') : 'In 24 hours';
-      fc.innerHTML = '<i></i><b>' + esc(lab) + '</b>'; fc.title = lab + (q.word ? ': ' + q.word : '') + (q.wind ? ', ' + q.wind + ' km/h' : ''); pins.appendChild(fc);
+      var close = Math.abs(q.x - o.x) * kx + Math.abs(q.y - o.y) * ky < 260 && T.length > 1;      // too near the cyclone's own name to label; the dot stays and the time is in the details
+      fc.innerHTML = '<i></i>' + (close ? '' : '<b>' + esc(lab) + '</b>'); fc.title = lab + (q.word ? ': ' + q.word : '') + (q.wind ? ', ' + q.wind + ' km/h' : ''); pins.appendChild(fc);
     });
   }
   var pin = pins.querySelector('.pin.' + F.k + '[data-' + F.k + '="' + o.id + '"]:not(.qs)');
@@ -3538,6 +3549,10 @@ function fit() {
   farThings().forEach(function (o) {
     EXT.l = Math.min(EXT.l, o.x / 100 - 0.2); EXT.r = Math.max(EXT.r, o.x / 100 + 0.2);
     if (o.near !== false) { BN.l = Math.min(BN.l, o.x / 100 - 0.12); BN.r = Math.max(BN.r, o.x / 100 + 0.12); BN.t = Math.max(EXT.t, Math.min(BN.t, o.y / 100 - 0.08)); BN.b = Math.min(EXT.b, Math.max(BN.b, o.y / 100 + 0.08)); }
+  });
+  cyclonesShown().forEach(function (c) {      // a forecast track may run north of the rain forecast; the map can still be moved there to follow it
+    if (!c.show) return;
+    (c.track || []).forEach(function (q) { var m = (q.r || 150) / 111 * 0.0592 + 0.12; EXT.t = Math.max(-2.3, Math.min(EXT.t, q.y / 100 - m)); EXT.b = Math.min(3.4, Math.max(EXT.b, q.y / 100 + m)); EXT.l = Math.min(EXT.l, q.x / 100 - m * 1.6); EXT.r = Math.max(EXT.r, q.x / 100 + m * 1.6); });
   });
   var ew = EXT.r - EXT.l, eh = EXT.b - EXT.t;
   // the furthest zoom-out: as far as the panel can go while still being filled by EXT
