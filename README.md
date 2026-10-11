@@ -70,6 +70,10 @@ why, and how reliable each reading is.
   degrees South, and well beyond the PAR to the east and west. The band over the PAR is read in
   full detail and the areas above and below it at every second point. On tall screens the map
   panel is kept no taller than this area, so nothing is shown without a forecast.
+- **Typhoon forecast track.** Selecting a cyclone draws its forecast positions for up to the next 5 days
+  (RSMC Tokyo gives 24, 48, 72, 96 and 120 hours), each with its day and time and a circle for where
+  the centre is most likely to be, plus the path it has taken since the dashboard first saw it.
+  No official source publishes a 7-day track.
 - **Focus on what is affected.** Selecting a volcano, an earthquake or a cyclone hides every airport
   except the ones it can affect (150 km ring for a volcano, 100 km ring for an earthquake, the
   strong-wind area for a cyclone). Closing the selection brings all airports back.

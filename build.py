@@ -521,7 +521,15 @@ def load_jma_tc():
                             mv=JDIR.get(course) or JDIR.get(course.upper()), sp=(round(sp) if sp else (round(spk * 1.852) if spk else None)),
                             still=bool(isinstance(ana.get('speed'), dict) and ana['speed'].get('note') and not sp and not spk),
                             wind24=(kmh((f24.get('maximumWind') or {}).get('sustained')) if f24 and isinstance(f24.get('maximumWind'), dict) else None),
-                            fc=((fla, flo) if fla is not None and flo is not None else None)))
+                            fc=((fla, flo) if fla is not None and flo is not None else None), track=[]))
+            # every forecast point the agency gives (normally 24, 48, 72, 96 and 120 hours ahead), for the track drawn on the map
+            for r in pts:
+                h_ = hrs(r); tl, to = latlon(r.get('position')); tv = when(r)
+                if not h_ or tl is None or to is None: continue
+                if tv is None: tv = t + dt.timedelta(hours=h_)
+                out[-1]['track'].append(dict(h=int(h_), la=tl, lo=to, t=tv, wind=(kmh((r.get('maximumWind') or {}).get('sustained')) if isinstance(r.get('maximumWind'), dict) else None),
+                                             r=(val(r.get('probabilityCircleRadius'), 'km') or (val(r.get('probabilityCircleRadius'), 'nm') or 0) * 1.852 or None)))
+            out[-1]['track'].sort(key=lambda z: z['h'])
             o = out[-1]
             print(f"TYPHOON: JMA {code}: {cls} {name or '(no name)'} at {la:.1f}N {lo:.1f}E, winds {o['wind']} km/h, strong winds reach {o['gale']} km, moving {o['mv']} at {o['sp']} km/h, 24 h forecast {o['fc']} ({o['wind24']} km/h), issued {t.strftime('%d %b %H:%MZ')}", file=sys.stderr)
             if o['wind'] is None or o['gale'] is None or o['fc'] is None: print(f"TYPHOON: JMA {code} raw (some figures missing): {' '.join(body.split())[:1400]}", file=sys.stderr)
@@ -1111,6 +1119,18 @@ else:
 #   Expected in 24 hours  : an airport is inside that area at the 24-hour forecast position.
 #   TY_NEAR_KM            : used only when the reach is not given.
 TY_NEAR_KM = 300
+def _past(name, x, y):
+    """Where this cyclone has been, from the dashboard's own earlier checks (kept for 7 days): [[ms, x, y], ...]."""
+    out = []
+    try:
+        for c0 in (OLD_DATA.get('cyclones') or []):
+            if name and c0.get('name') == name:
+                out = [p for p in (c0.get('past') or []) if NOW.timestamp() * 1000 - p[0] <= 7 * 86400000]
+                if c0.get('x') is not None and (not out or abs(out[-1][1] - c0['x']) + abs(out[-1][2] - c0['y']) > 0.4): out.append([c0.get('ms') or 0, round(c0['x'], 2), round(c0['y'], 2)])
+    except Exception: out = []
+    return out[-80:]
+try: OLD_DATA = json.load(open(OUT, encoding='utf-8'))
+except Exception: OLD_DATA = {}
 STAGES = [(185, 'STY', 'Super Typhoon'), (118, 'TY', 'Typhoon'), (89, 'STS', 'Severe Tropical Storm'), (62, 'TS', 'Tropical Storm'), (0, 'TD', 'Tropical Depression')]
 def stage_of(kmh):
     for lim, code, word in STAGES:
@@ -1187,6 +1207,8 @@ try:
             where=f"{title} is {pos}" + (f", {move}" if move else '') + (f" and {c['chg']}" if c['chg'] else '') + '.' + (f" It is {c['trend']}." if c['trend'] else ''),
             windline=windline, reachline=reachline, fcline=fcline, cross=cross, todo=todo,
             src='Position and warning areas: aviation storm warnings (aviationweather.gov). Strength, wind reach and forecast: RSMC Tokyo, Japan Meteorological Agency. Cross-check: GDACS.',
+            track=[dict(h=z['h'], x=P['cx'][0] * z['lo'] + P['cx'][1], y=P['cy'][0] * z['la'] + P['cy'][1], lat=z['la'], ms=int(z['t'].timestamp() * 1000), wind=z['wind'], word=stage_of(z['wind'])[1] if z['wind'] else '', r=(round(z['r']) if z['r'] else None)) for z in ((j or {}).get('track') or [])],
+            past=_past(c['name'], x_, y_),
             ms=int((j['issued'] if j else NOW).timestamp() * 1000)))
         if confirmed and (now_ap or exp_ap):
             grp = 'STY' if code == 'STY' else 'TY' if code == 'TY' else 'TS'
@@ -1524,7 +1546,9 @@ try:
         if v['until'] is None or vt > v['until']: v['until'] = vt
         top = x.get('top'); mv = DIRW.get(x.get('dir') or ''); sp = round(float(x['spd']) * 1.852) if str(x.get('spd') or '').replace('.', '', 1).isdigit() else None
         desc = ('Ash cloud' + (f" up to about {int(round(float(top) * 0.3048 / 100) * 100):,} m high" if top else '') + (f", moving {mv}" + (f" at {sp} km/h" if sp else '') if mv else '') + '.')
-        if desc not in v['ash']: v['ash'].append(desc)
+        # when two warnings overlap for one volcano (the old one has not expired yet), describe the cloud from the newer one only
+        _t0 = int(x.get('validTimeFrom', 0))
+        if _t0 >= v.get('_ashms', -1): v['ash'] = [desc]; v['_ashms'] = _t0
         for pp in polys:
             if any(0 <= la <= 25 and 110 <= lo <= 135 for la, lo in pp):
                 ASH_AREAS.append(dict(v=vid, name=v['name'], b=int(x['validTimeTo']) * 1000, p=[[round(P['cx'][0] * lo + P['cx'][1], 1), round(P['cy'][0] * la + P['cy'][1], 1)] for la, lo in pp]))
