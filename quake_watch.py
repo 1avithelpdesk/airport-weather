@@ -16,7 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, 'docs', 'data.json')
 STATE = os.path.join(HERE, 'notify_state.json')
 MAX_TRIES = 2              # how many times one earthquake may ask for a full refresh (in case the first one fails)
-WATCH_MAG = 5.0            # the smallest earthquake that can raise an alert
+WATCH_MAG = 4.5            # the smallest earthquake that can raise an alert
 WATCH_HOURS = 3            # only look at earthquakes this recent
 BOX = dict(minlat=3, maxlat=22, minlon=114, maxlon=130)     # the Philippine area, same as build.py
 UA = '1AV-AirportWeatherDashboard/1.0 (earthquake watch)'

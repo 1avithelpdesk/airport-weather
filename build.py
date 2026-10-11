@@ -889,12 +889,14 @@ EQ_ALERTS = []
 # small dot on the map, and the main earthquake's details list them. An event counts as an aftershock when
 # it is below AFTER_MAX_MAG, within AFTER_KM of a main earthquake of MAIN_MAG or stronger, and no more than
 # AFTER_HOURS after it. Stronger aftershocks keep their own ring and their own alert checks.
-MAIN_MAG = 5.0; AFTER_MAX_MAG = 5.0; AFTER_KM = 100; AFTER_HOURS = 72
+ALERT_MAG = 4.5          # an earthquake this strong or stronger within 100 km of an airport raises an alert
+SMALL_MAG = 3.0; SMALL_DAYS = 3      # weaker earthquakes down to this size are shown as small dots for this many days, without an alert
+MAIN_MAG = 5.0; AFTER_MAX_MAG = ALERT_MAG; AFTER_KM = 100; AFTER_HOURS = 72
 # ---------- second agency ----------
 # For earthquakes of CHECK_MAG or stronger in the last 24 hours, a second agency (USGS) is read as well, so the
 # dashboard can show both magnitudes. If the second agency places the earthquake within 100 km of an airport,
 # that airport is flagged too: the more cautious of the two positions is used.
-CHECK_MAG = 5.0
+CHECK_MAG = 4.5
 def second_agency():
     """Other earthquake agencies to check the main one against: [(time ms, lat, lon, depth, magnitude, place, agency)].
     Whichever of USGS and EMSC is not already the main source is asked, so there is still a cross-check when PHIVOLCS is down."""
@@ -939,7 +941,7 @@ try:
         x=P['cx'][0]*lo+P['cx'][1]; y=P['cy'][0]*la+P['cy'][1]; recent=(NOW-t)<=dt.timedelta(hours=24)
         place=re.sub(r', Philippines$','',p['place'])
         dkm=int(round(dist/10)*10); hit=[]
-        if recent and p['mag']>=5.0:
+        if recent and p['mag']>=ALERT_MAG:
             for r in rows:
                 dd=hav(la,lo,r['lat'],r['lon'])
                 if dd<=100: flags.append((r['name'],p['mag'],round(dd),place,t)); hit.append(r['name'])
@@ -971,7 +973,7 @@ try:
         elif strong: EQ_ALERTS.append(dict(kind='strong',q=qid,ms=p['time'],text=f"Strong earthquake: magnitude {p['mag']:.1f}, {place} ({whenq}). Nearest airport: {near['name']}, about {dkm} km away."+(f" USGS places it nearer, about {hit2[0][1]} km from {hit2[0][0]}. Check runways and facilities at {', '.join(hit)}." if hit2 else (f" Check runways and facilities at {', '.join(hit)}." if hit else ''))))
         elif hit: EQ_ALERTS.append(dict(kind='flag',q=qid,ms=p['time'],text=f"Earthquake near {', '.join(hit)}: magnitude {p['mag']:.1f}, {place} ({whenq}). Check runways and facilities."))
         if hit: todo='Earthquake flag. Check runways, buildings and equipment at '+', '.join(hit)+' before normal work continues.'+(f" ({QSRC} places this earthquake more than 100 km away, but USGS places it about {hit2[0][1]} km from {hit2[0][0]}. The more cautious position is used.)" if hit2 else '')
-        elif p['mag']<5.0: todo='No action needed. No airport flag: a flag needs magnitude 5.0 or stronger within 100 km of an airport in the last 24 hours.'
+        elif p['mag']<ALERT_MAG: todo='No action needed. No airport flag: a flag needs magnitude 4.5 or stronger within 100 km of an airport in the last 24 hours.'
         elif not recent: todo='No action needed. This earthquake is more than 24 hours old and is shown for reference.'
         else: todo='No action needed. No airport is within 100 km of this earthquake.'
         sh=SHOCKS.get(p['time'],[]); shocks=[]; slist=[]
@@ -1007,9 +1009,21 @@ try:
 except Exception as _e:
     print('TSUNAMI CROSS-CHECK ERROR', _e, file=sys.stderr)
 EQ_ALERTS.sort(key=lambda a: ({'tsunami': 0, 'strong': 1, 'flag': 2}[a['kind']], -a['ms']))
+# Weaker earthquakes, for the map only. They come from the main source's full list (PHIVOLCS); the backups list 4.5 and stronger only.
+QUAKES_SMALL = []
+try:
+    _shown = {(round(k[0], 2), round(k[1], 2)) for q in quakes for k in (q.get('shocks') or [])}
+    for (t_, la_, lo_, dep_, mag_, pl_) in QUAKE_ALL:
+        if not (SMALL_MAG <= mag_ < ALERT_MAG) or (NOW - t_) > dt.timedelta(days=SMALL_DAYS): continue
+        x_ = P['cx'][0] * lo_ + P['cx'][1]; y_ = P['cy'][0] * la_ + P['cy'][1]
+        if not (0 <= x_ <= 100 and 0 <= y_ <= 100) or (round(x_, 2), round(y_, 2)) in _shown: continue
+        QUAKES_SMALL.append([round(x_, 2), round(y_, 2), round(mag_, 1), int(t_.timestamp() * 1000), re.sub(r', Philippines$', '', pl_ or '')[:70]])
+    QUAKES_SMALL.sort(key=lambda z: -z[3]); QUAKES_SMALL = QUAKES_SMALL[:200]
+except Exception as _e:
+    QUAKES_SMALL = []; print('SMALL QUAKES ERROR', _e, file=sys.stderr)
 if flags:
     flag='Earthquake flag: '+'; '.join(f"{n} is about {d} km from a magnitude {m:.1f} earthquake ({pl}, {day(t)}, {clock_plain(t)})" for n,m,d,pl,t in flags)+'. Check runways and facilities before resuming normal work.'
-else: flag='No airport is within 100 km of a magnitude 5.0 or stronger earthquake in the last 24 hours.'
+else: flag='No airport is within 100 km of a magnitude 4.5 or stronger earthquake in the last 24 hours.'
 def brg(a,b,c,d):
     p1,p2=math.radians(a),math.radians(c); dl=math.radians(d-b)
     y=math.sin(dl)*math.cos(p2); x=math.cos(p1)*math.sin(p2)-math.sin(p1)*math.cos(p2)*math.cos(dl)
@@ -1649,9 +1663,9 @@ data=dict(
     quakes=[{k:q[k] for k in QKEEP} for q in quakes],
     quake_ok=bool(asof), flag=flag if asof else 'Earthquake data could not be reached at this check.',
     quake_asof=(f"{day(asof)}, {clock_plain(asof)}" if asof else ''),
-    quake_count=(f"{len(quakes)} earthquake{'' if len(quakes)==1 else 's'} of magnitude 4.5+ in the past 7 days (purple rings, tap one for details). Small purple dots are aftershocks of a main earthquake." if asof else ''),
+    quake_count=(f"{len(quakes)} earthquake{'' if len(quakes)==1 else 's'} of magnitude 4.5+ in the past 7 days (purple rings, tap one for details). Small purple dots are weaker earthquakes (magnitude 3.0 to 4.4, last 3 days) and aftershocks; they raise no alert." if asof else ''),
     ty_text=ty_main, ty_banner=ty_banner, ty_asof=((', '.join(k for k, ok in (('Aviation storm warnings', SIGMET is not None), ('RSMC Tokyo', JMATC is not None), ('GDACS', GDACS is not None)) if ok) + f", {day(NOW)}, {clock_plain(NOW)}") if tyok else ''),
-    cyclones=CYCLONES, ty_alerts=TY_ALERTS, ty_near_km=TY_NEAR_KM, lows=LOWS, lows_ok=LOWS_OK,
+    quakes_small=QUAKES_SMALL, cyclones=CYCLONES, ty_alerts=TY_ALERTS, ty_near_km=TY_NEAR_KM, lows=LOWS, lows_ok=LOWS_OK,
     quake_src=QSRC, source_status=SRC_STATUS, eq_alerts=[dict(kind=a['kind'],q=a['q'],ms=a['ms'],text=a['text']) for a in EQ_ALERTS], rain_chance=bool(RAIN_CHANCE), week_ms=WEEK_MS, backup_tests=BACKUP_TESTS, thunder=dict(areas=TS_AREAS, airports=TS_AIRPORTS),
     tmr_note=f"{ph(T0).strftime('%A')}, {day(T0)}. Airports where bad weather is forecast for tomorrow, from airport forecasts and estimates. This is a forecast and is less certain than today's alerts. Select an airport on the map for its full report, including the days ahead.",
     volcanoes=volcanoes, vol_alerts=[dict(kind=a['kind'],key=a['key'],v=a['v'],ms=a['ms'],text=a['text']) for a in VOL_ALERTS], ash=ASH_AREAS, volcano_ok=vol_ok, volcano_flag=vol_flag,

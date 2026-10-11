@@ -155,7 +155,7 @@ Earthquake and volcano alerts are treated as critical.
 | Tropical cyclones (typhoons) | Three sources read at every check: aviation storm warnings (aviationweather.gov) for position, movement and warning areas; RSMC Tokyo (Japan Meteorological Agency) for strength, wind reach and the 24-hour forecast; GDACS as an independent third | Each stands in for the others. A cyclone is confirmed only when at least two report it |
 | Thunderstorm area warnings | Aviation storm warnings (aviationweather.gov) | none |
 | Low pressure areas (information only) | Joint Typhoon Warning Center tropical weather advisory | none; the marks are left out |
-| Earthquakes | PHIVOLCS | USGS, then EMSC. Every earthquake of magnitude 5.0 or stronger is also cross-checked against USGS or EMSC |
+| Earthquakes | PHIVOLCS | USGS, then EMSC. Every earthquake of magnitude 4.5 or stronger is also cross-checked against USGS or EMSC |
 | Volcanic ash and eruptions | Aviation ash warnings (SIGMET), aviationweather.gov. Gives the ash area | Second source: Tokyo VAAC advisories (Japan Meteorological Agency). Confirms the warning, and stands in when it is missing or cannot be reached |
 | Volcano alert levels | PHIVOLCS volcano bulletins | Levels entered by hand in `volcano_levels.json` |
 | Rain on the map | MET Norway forecast grid | none |
@@ -173,7 +173,7 @@ from and whether a second source agrees.
 | Kind | What is compared | Rule |
 |---|---|---|
 | Airport weather | One official report exists per airport, so it is checked for age. It can be read from two servers | Danger is raised only from the official report, never from an Estimate. A report older than 90 minutes lowers the Confidence |
-| Earthquakes | PHIVOLCS against USGS and EMSC | Shown and sent as soon as the first agency reports, because minutes matter. Each one of magnitude 5.0 or stronger carries a Cross-check line: confirmed by a second agency, not yet confirmed, or could not be cross-checked |
+| Earthquakes | PHIVOLCS against USGS and EMSC | Shown and sent as soon as the first agency reports, because minutes matter. Each one of magnitude 4.5 or stronger carries a Cross-check line: confirmed by a second agency, not yet confirmed, or could not be cross-checked |
 | Volcanic ash and eruptions | Aviation ash warning against the Tokyo VAAC advisory | Sent as soon as either official source reports. The details say whether Tokyo VAAC has confirmed it |
 | Tropical cyclones | Aviation storm warnings, RSMC Tokyo and GDACS | An alert is raised only after two of the three agree. Until then the cyclone is listed as "not yet confirmed" |
 
@@ -194,9 +194,11 @@ cross-checked says so in plain words; it is never shown as confirmed.
 - **Area warnings.** An airport inside an official thunderstorm or tropical cyclone area warning is
   raised to Warning.
 - **Earthquakes shown** are magnitude 4.5 or stronger in the Philippine area over the past 7 days.
-- **Earthquake alerts** cover the last 24 hours: magnitude 5.0 or stronger within 100 km of an
+  Weaker ones, magnitude 3.0 to 4.4 from the past 3 days, are small dots for awareness only and never
+  raise an alert (`SMALL_MAG`, `SMALL_DAYS` and `ALERT_MAG` in `build.py`).
+- **Earthquake alerts** cover the last 24 hours: magnitude 4.5 or stronger within 100 km of an
   airport, or magnitude 6.0 or stronger anywhere in the Philippine area.
-- **Aftershocks** (below magnitude 5.0, within 100 km of a main earthquake of 5.0 or stronger, in
+- **Aftershocks** (below magnitude 4.5, within 100 km of a main earthquake of 5.0 or stronger, in
   the 72 hours after it) are grouped with the main earthquake: small dots on the map, one list in
   its details.
 - **Two agencies.** For strong earthquakes the USGS figure is shown beside the PHIVOLCS figure, and
