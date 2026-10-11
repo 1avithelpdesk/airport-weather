@@ -1977,7 +1977,10 @@ html[data-theme="dark"] .glass #pins .vrangelab{color:#FFAE8A;background:rgba(30
 .glass #pins.vfocus.f-q .ashtag,.glass #pins.vfocus.f-t .ashtag,.glass #pins.vfocus.f-q .ashlayer,.glass #pins.vfocus.f-t .ashlayer{display:none}
 .glass #pins .ttrack{position:absolute;inset:0;pointer-events:none}
 .glass #pins .ttrack svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.glass #pins .ttrack line{stroke:#0B6E8A;stroke-width:2;stroke-dasharray:2 5;stroke-linecap:round;opacity:.8}
+.glass #pins .ttrack .tline{fill:none;stroke:#0B6E8A;stroke-width:2;stroke-dasharray:2 5;stroke-linecap:round;opacity:.9}
+.glass #pins .ttrack .tpast{fill:none;stroke:#0B6E8A;stroke-width:2;opacity:.45}
+.glass #pins .ttrack .tcone{fill:rgba(11,110,138,.09);stroke:rgba(11,110,138,.35);stroke-width:1}
+.glass #pins .tfc.alt b{top:auto;bottom:17px}
 .glass #pins .tfc{position:absolute;z-index:6;pointer-events:none;transform:translate(-50%,-50%) scale(var(--inv,1))}
 .glass #pins .tfc i{display:block;width:14px;height:14px;margin:0 auto;border-radius:50%;border:2px dashed #0B6E8A;background:rgba(var(--g-surf),.85)}
 .glass #pins .tfc b{position:absolute;left:50%;top:17px;transform:translateX(-50%);font-size:11px;font-weight:600;color:#0B5A72;background:rgba(var(--g-surf),.9);border-radius:999px;padding:1px 8px;white-space:nowrap}
@@ -1986,7 +1989,8 @@ html[data-theme="dark"] .glass #pins .vrange.k-q{border-color:rgba(201,140,240,.
 html[data-theme="dark"] .glass #pins .vrangelab.k-q{color:#D9B3F5}
 html[data-theme="dark"] .glass #pins .vrange.k-t{border-color:rgba(110,205,228,.8);background:rgba(110,205,228,.07)}
 html[data-theme="dark"] .glass #pins .vrangelab.k-t,html[data-theme="dark"] .glass #pins .tfc b{color:#8FDCEF;background:rgba(30,39,58,.92)}
-html[data-theme="dark"] .glass #pins .ttrack line{stroke:#6ECDE4}
+html[data-theme="dark"] .glass #pins .ttrack .tline,html[data-theme="dark"] .glass #pins .ttrack .tpast{stroke:#6ECDE4}
+html[data-theme="dark"] .glass #pins .ttrack .tcone{fill:rgba(110,205,228,.09);stroke:rgba(110,205,228,.4)}
 html[data-theme="dark"] .glass #pins .tfc i{border-color:#6ECDE4;background:rgba(30,39,58,.85)}
 /* while something is selected, the alert cards over the map step aside; they return when the selection is cleared */
 @media (min-width:901px){
@@ -2336,7 +2340,7 @@ html[data-theme="dark"] .alertbtn b{box-shadow:0 0 0 2px #16202F}
         <li><strong>Level counts.</strong> The four large numbers (Danger, Warning, Advisory, Normal) show how many airports are at each level. Press one to show only that level on the map and in the list; press it again to go back. On a phone these are the five tiles under the alerts.</li>
         <li><strong>Today and Tomorrow.</strong> At the top. Switches the list between today's alerts and airports with bad weather forecast for tomorrow.</li>
         <li><strong>Region and Find an airport.</strong> Region narrows everything to Luzon, Visayas or Mindanao. Find an airport jumps straight to one airport; when a region is chosen it lists only the airports in that region.</li>
-        <li><strong>Map.</strong> The map fills the left side of the screen. The rain timeline and the Auto-show switch are just under it. Each dot is an airport, coloured by its level. A flashing dot means a thunderstorm there now. A dashed outline means the reading is an Estimate. On wide screens the neighbouring countries are drawn around the Philippines so the rain forecast can be seen coming in; they are a picture only and cannot be selected. Triangles are volcanoes: filled means an eruption or a raised alert level, and a brown dashed area is an official ash cloud warning. Selecting a volcano zooms to it, shows its name and status, and draws a dashed ring 150 km around it. While it is selected, only the airports it can affect are shown, with their names: those inside the ring and any under its ash. Purple rings are earthquakes: larger means stronger, faded means more than 24 hours old. Selecting an earthquake zooms to it and draws a dashed ring 100 km around it; while it is selected, only the airports inside the ring are shown (or the nearest airport when none is inside). A round swirl is a tropical cyclone, labelled with its class and name. A grey dashed swirl is one that only a single source has reported so far. Selecting a cyclone draws how far its strong winds reach and where it is forecast to be in 24 hours, and shows only the airports within reach. Closing the selection brings every airport back. To keep the map clear, airport names show for Danger airports, for the airport you select, and when you zoom in; hover or tap any dot to see its name. The Layers button turns rain, earthquakes, all volcanoes and all airport names on or off, and remembers your choice on that device.</li>
+        <li><strong>Map.</strong> The map fills the left side of the screen. The rain timeline and the Auto-show switch are just under it. Each dot is an airport, coloured by its level. A flashing dot means a thunderstorm there now. A dashed outline means the reading is an Estimate. On wide screens the neighbouring countries are drawn around the Philippines so the rain forecast can be seen coming in; they are a picture only and cannot be selected. Triangles are volcanoes: filled means an eruption or a raised alert level, and a brown dashed area is an official ash cloud warning. Selecting a volcano zooms to it, shows its name and status, and draws a dashed ring 150 km around it. While it is selected, only the airports it can affect are shown, with their names: those inside the ring and any under its ash. Purple rings are earthquakes: larger means stronger, faded means more than 24 hours old. Selecting an earthquake zooms to it and draws a dashed ring 100 km around it; while it is selected, only the airports inside the ring are shown (or the nearest airport when none is inside). A round swirl is a tropical cyclone, labelled with its class and name. A grey dashed swirl is one that only a single source has reported so far. Selecting a cyclone draws how far its strong winds reach and its forecast track for up to the next 5 days from RSMC Tokyo: a dashed line through the forecast positions, each labelled with its day and time, inside a circle showing where the centre is most likely to be. The circles widen further ahead because the forecast is less certain. A faint solid line shows where the cyclone has been since the dashboard first saw it. Only the airports within reach of its strong winds are shown. Closing the selection brings every airport back. To keep the map clear, airport names show for Danger airports, for the airport you select, and when you zoom in; hover or tap any dot to see its name. The Layers button turns rain, earthquakes, all volcanoes and all airport names on or off, and remembers your choice on that device.</li>
         <li><strong>Moving around the map.</strong> Use the + and − buttons, the mouse wheel, pinch, or double-tap to zoom, and drag to move. The round arrow under them goes back to the usual view and clears the selection. The usual view shows the whole Philippine Area of Responsibility (PAR), the area PAGASA watches for tropical cyclones, drawn as a dashed outline from 115 to 135 degrees East and 5 to 25 degrees North. You can zoom out further to see the wider region, and drag the map in any direction; the neighbouring countries are drawn for reference only and cannot be selected. Cyclones and low pressure areas outside the PAR are drawn too, as far east as about 160 degrees East. When one is within roughly 1,000 km of the PAR, the usual view widens to include it; ones further away are seen by zooming out or dragging, and are always named on the Typhoon tile and listed under Hazards. A red circle with an L is a low pressure area, where a cyclone can start; press it for details. It is for information only and raises no alert.</li>
         <li><strong>Airport list.</strong> On the right, under the key figures. Lists the airports at the chosen level with what to expect and when. Press Details, or anywhere on a row, to open that airport.</li>
         <li><strong>Key figures.</strong> The tiles at the top right: airports needing attention, thunderstorms at an airport now, airports with an official weather report, and bad weather forecast for tomorrow. Press one to show those airports in the list. To go back, press it again or press "Clear filter" beside the list title. The smaller tiles show earthquake alerts, volcano alerts and typhoon, and Live is a running clock in Philippine time (24-hour); one turns red when it has an alert, and pressing it opens that list.</li>
@@ -2653,9 +2657,9 @@ function renderData() {
   });
   var vh = '', ash = D.ash || [];
   if (ash.length) {
-    vh += '<svg class="ashlayer" viewBox="0 0 100 100" preserveAspectRatio="none">' + ash.map(function (a) { return '<polygon points="' + a.p.map(function (q) { return q[0] + ',' + q[1]; }).join(' ') + '"/>'; }).join('') + '</svg>';
+    vh += '<svg class="ashlayer" viewBox="0 0 100 100" preserveAspectRatio="none">' + ash.map(function (a) { return '<polygon data-ashv="' + esc(a.v || a.name || '') + '" points="' + a.p.map(function (q) { return q[0] + ',' + q[1]; }).join(' ') + '"/>'; }).join('') + '</svg>';
     var tagged = {};      // one label per volcano, even when two warnings overlap
-    ash.forEach(function (a) { if (tagged[a.v || a.name]) return; tagged[a.v || a.name] = 1; var sx = 0, top = 1e9; a.p.forEach(function (q) { sx += q[0]; if (q[1] < top) top = q[1]; }); vh += '<span class="ashtag" style="left:' + (sx / a.p.length).toFixed(1) + '%;top:' + top.toFixed(1) + '%">ASH CLOUD</span>'; });
+    ash.forEach(function (a) { if (tagged[a.v || a.name]) return; tagged[a.v || a.name] = 1; var sx = 0, top = 1e9; a.p.forEach(function (q) { sx += q[0]; if (q[1] < top) top = q[1]; }); vh += '<span class="ashtag" data-ashv="' + esc(a.v || a.name || '') + '" style="left:' + (sx / a.p.length).toFixed(1) + '%;top:' + top.toFixed(1) + '%">ASH CLOUD</span>'; });
   }
   (D.volcanoes || []).forEach(function (v) {
     if (!v.onmap || !v.show) return;
@@ -2759,7 +2763,13 @@ function selPoint() {
 }
 function viewNow() {
   var p = selPoint(), v = S.view, zsel = 2.2;
-  if (p && S.tk && !S.sel && !p.onmap && !v) { var fz = Math.min(VIEWN.z, 1.6), mx = OFFX + (p.x + 50) / 2 * FITX, my = OFFY + (p.y + 36) / 2 * FITY; return { z: fz, cx: clampC(mx, fz, PANX), cy: clampC(my, fz, PANY) }; }      // far out at sea: stay on the widest view so it and the Philippines are both in sight
+  if (p && S.tk && !S.sel && !v && (p.track || []).length) {      // a cyclone with a forecast track: frame where it is now and where it is heading
+    var bx0 = p.x, bx1 = p.x, by0 = p.y, by1 = p.y;
+    p.track.forEach(function (q) { bx0 = Math.min(bx0, q.x); bx1 = Math.max(bx1, q.x); by0 = Math.min(by0, q.y); by1 = Math.max(by1, q.y); });
+    var wpc = Math.max(1, (bx1 - bx0) * FITX), hpc = Math.max(1, (by1 - by0) * FITY), tz = Math.max(1, Math.min(HOMEZ * 1.45, 62 / wpc, 62 / hpc));
+    return { z: tz, cx: clampC(OFFX + (bx0 + bx1) / 2 * FITX, tz, PANX), cy: clampC(OFFY + (by0 + by1) / 2 * FITY, tz, PANY) };
+  }
+  if (p && S.tk && !S.sel && !p.onmap && !v) { var fz = VIEWN.z, qx = p.fx != null ? (p.x + p.fx) / 2 : p.x, qy = p.fy != null ? (p.y + p.fy) / 2 : p.y; return { z: fz, cx: clampC(OFFX + qx * FITX, fz, PANX), cy: clampC(OFFY + qy * FITY, fz, PANY) }; }      // far out at sea: the map moves to it, at the same scale as the usual view
   if (p && S.tk && !S.sel) {      // a cyclone: frame it together with where it is heading, a little wider than an airport
     var tx = p.fx != null ? p.fx : null, ty = p.fy != null ? p.fy : null;
     if (tx == null) { var bd = 1e9; D.airports.forEach(function (a) { var d = Math.pow(a.x - p.x, 2) + Math.pow((a.y - p.y) * 1.5, 2); if (d < bd) { bd = d; tx = a.x; ty = a.y; } }); }
@@ -2944,7 +2954,7 @@ function applyState() {
       todoBox((cy.now || []).length || (cy.soon || []).length ? 'typhoon' : '', cy.todo) + cycloneScale(cy) +
       '<div class="dfacts"><div><span>Strongest winds</span><b>' + (cy.wind ? cy.wind + ' km/h' : 'Not reported') + '</b></div><div><span>Strong winds reach</span><b>' + (cy.gale ? 'about ' + (Math.round(cy.gale / 10) * 10) + ' km' : 'Not reported') + '</b></div><div><span>Nearest airport</span><b>' + (Math.round(cy.dist / 10) * 10).toLocaleString('en-US') + ' km</b></div></div>' +
       field('Where it is', cy.where) + ((cy.now || []).length ? field('Airports strong winds can reach now', cy.now.join(', ') + '.') : '') + ((cy.soon || []).length ? field('Airports that may be reached within 24 hours', cy.soon.join(', ') + '.') : '') +
-      field('Winds', [cy.windline, cy.reachline].filter(Boolean).join(' ')) + (cy.fcline ? field('Forecast', cy.fcline) : '') + field('Cross-check', cy.cross) +
+      field('Winds', [cy.windline, cy.reachline].filter(Boolean).join(' ')) + (cy.fcline ? field('Forecast', cy.fcline) : '') + ((cy.track || []).length > 1 ? field('Forecast track (RSMC Tokyo)', cy.track.map(function (q) { return new Date(q.ms).toLocaleString('en-US', { timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric' }) + ': ' + (q.word || 'position only') + (q.wind ? ', ' + q.wind + ' km/h' : ''); }).join('. ') + '. Each circle on the map is where the centre is most likely to be at that time; the circles widen because forecasts are less certain further ahead.') : '') + field('Cross-check', cy.cross) +
       fold('about', 'About this reading', cy.confirmed ? 'Cross-checked' : 'One source only', (cy.ms ? field('Reported', phDay(cy.ms) + ', ' + phTime(cy.ms) + ' Philippine time (' + agoText(cy.ms) + ').') : '') + field('Source', cy.src) +
         field('Official wind signals', 'PAGASA issues the official Tropical Cyclone Wind Signals. Confirm any decision against the PAGASA bulletin and CAAP and airline advisories.')) + '</div>';
   } else {
@@ -3322,6 +3332,8 @@ function volcanoFocus() {
   }
   pins.classList.toggle('vfocus', focus);
   ['v', 'q', 't'].forEach(function (k) { pins.classList.toggle('f-' + k, !!(F && F.k === k)); });
+  // only the selected volcano's own ash cloud stays; another volcano's ash is hidden so it cannot be mistaken for this one's
+  Array.prototype.forEach.call(pins.querySelectorAll('[data-ashv]'), function (e) { e.style.display = (F && F.k === 'v' && e.getAttribute('data-ashv') !== o.id) ? 'none' : ''; });
   pins.classList.toggle('all-labels', focus || LAYERS.names);
   Array.prototype.forEach.call(pins.querySelectorAll('.pin.a'), function (p) { var a = focus ? byId(p.getAttribute('data-a')) : null; p.classList.toggle('v-out', !!(focus && a && !names[a.name])); });
   // a Danger airport normally carries a large name card; while something else is selected it drops to a small tag so the two cards never overlap
@@ -3334,11 +3346,22 @@ function volcanoFocus() {
   old.className = 'vrange k-' + F.k; rl.className = 'vrangelab k-' + F.k;
   rl.style.left = o.x.toFixed(2) + '%'; rl.style.top = (o.y + (F.k === 't' && !(o.fy != null && o.fy < o.y) ? -1 : 1) * hPct / 2).toFixed(2) + '%';      // the label sits on the side of the ring away from the forecast marker rl.textContent = F.lab;
   old.style.left = o.x.toFixed(2) + '%'; old.style.top = o.y.toFixed(2) + '%'; old.style.width = wPct.toFixed(2) + '%'; old.style.height = hPct.toFixed(2) + '%';
-  if (F.k === 't' && o.fx != null && o.fy != null) {      // where the cyclone is forecast to be in 24 hours
-    var tr = document.createElement('div'); tr.className = 'ttrack';
-    tr.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="' + o.x.toFixed(2) + '" y1="' + o.y.toFixed(2) + '" x2="' + o.fx.toFixed(2) + '" y2="' + o.fy.toFixed(2) + '" vector-effect="non-scaling-stroke"/></svg>';
+  if (F.k === 't' && ((o.track || []).length || (o.fx != null && o.fy != null))) {      // where the cyclone has been and where it is forecast to go
+    var T = (o.track || []).length ? o.track : [{ h: 24, x: o.fx, y: o.fy, lat: o.lat, ms: 0, r: null, word: '' }], P0 = o.past || [];
+    var pt = function (q) { return q.x.toFixed(2) + ',' + q.y.toFixed(2); }, svg = '';
+    T.forEach(function (q) {      // the circle is where the centre is most likely to be at that time; it widens the further ahead the forecast looks
+      if (!q.r) return; var ry = q.r / 111 * 5.91775171, rx = q.r / (111 * Math.max(.3, Math.cos((q.lat || 15) * Math.PI / 180))) * 8.69278161;
+      svg += '<ellipse class="tcone" cx="' + q.x.toFixed(2) + '" cy="' + q.y.toFixed(2) + '" rx="' + rx.toFixed(2) + '" ry="' + ry.toFixed(2) + '" vector-effect="non-scaling-stroke"/>';
+    });
+    if (P0.length) svg += '<polyline class="tpast" points="' + P0.map(function (q) { return q[1] + ',' + q[2]; }).join(' ') + ' ' + pt(o) + '" vector-effect="non-scaling-stroke"/>';
+    svg += '<polyline class="tline" points="' + pt(o) + ' ' + T.map(pt).join(' ') + '" vector-effect="non-scaling-stroke"/>';
+    var tr = document.createElement('div'); tr.className = 'ttrack'; tr.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none">' + svg + '</svg>';
     pins.insertBefore(tr, pins.firstChild);
-    var fc = document.createElement('span'); fc.className = 'tfc'; fc.style.left = o.fx.toFixed(2) + '%'; fc.style.top = o.fy.toFixed(2) + '%'; fc.innerHTML = '<i></i><b>In 24 hours</b>'; pins.appendChild(fc);
+    T.forEach(function (q, i) {
+      var fc = document.createElement('span'); fc.className = 'tfc' + (i % 2 ? ' alt' : ''); fc.style.left = q.x.toFixed(2) + '%'; fc.style.top = q.y.toFixed(2) + '%';
+      var lab = q.ms ? new Date(q.ms).toLocaleString('en-US', { timeZone: 'Asia/Manila', weekday: 'short', hour: 'numeric' }).replace(',', '') : 'In 24 hours';
+      fc.innerHTML = '<i></i><b>' + esc(lab) + '</b>'; fc.title = lab + (q.word ? ': ' + q.word : '') + (q.wind ? ', ' + q.wind + ' km/h' : ''); pins.appendChild(fc);
+    });
   }
   var pin = pins.querySelector('.pin.' + F.k + '[data-' + F.k + '="' + o.id + '"]:not(.qs)');
   if (F.k !== 't' && pin && !pin.querySelector('.vcard')) {
